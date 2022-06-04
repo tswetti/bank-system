@@ -8,7 +8,7 @@ class SavingsAccount : public Account
 
 public:
 	SavingsAccount() = delete;
-	SavingsAccount(int, const StringC&, const StringC&, const StringC&, double, const time_t&, double);
+	SavingsAccount(int, const StringC&, const StringC&, const StringC&, const time_t&, double, double = 0);
 
 	void display() const override;
 	bool withdraw(double) override;

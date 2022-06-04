@@ -1,7 +1,7 @@
 #include "Account.h"
 #include <iostream>
 
-Account::Account(int id, const StringC& name, const StringC& pass, const StringC& iban, double amount, const time_t& date)
+Account::Account(int id, const StringC& name, const StringC& pass, const StringC& iban, const time_t& date, double amount = 0)
 	: userId(id), username(name), password(pass), iban(iban), amount(amount), dateOfCreation(date){}
 
 void Account::display() const
@@ -19,4 +19,14 @@ double Account::getBalance() const
 void Account::deposit(double amount)
 {
 	this->amount += amount;
+}
+
+int Account::getUserId() const
+{
+	return userId;
+}
+
+StringC Account::getIban() const
+{
+	return iban;
 }

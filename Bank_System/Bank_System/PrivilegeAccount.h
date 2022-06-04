@@ -7,7 +7,7 @@ class PrivilegeAccount : public Account
 
 public:
 	PrivilegeAccount() = delete;
-	PrivilegeAccount(int, const StringC&, const StringC&, const StringC&, double, const time_t&, double);
+	PrivilegeAccount(int, const StringC&, const StringC&, const StringC&, const time_t&, double, double = 0);
 
 	void display() const override;
 	bool withdraw(double) override;

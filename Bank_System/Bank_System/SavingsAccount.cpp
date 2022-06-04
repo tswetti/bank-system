@@ -1,7 +1,7 @@
 #include "SavingsAccount.h"
 
-SavingsAccount::SavingsAccount(int id, const StringC& name, const StringC& pass, const StringC& iban, double amount, const time_t& date, double interest)
-	: Account(id, name, pass, iban, amount, date)
+SavingsAccount::SavingsAccount(int id, const StringC& name, const StringC& pass, const StringC& iban, const time_t& date, double interest, double amount)
+	: Account(id, name, pass, iban, date, amount)
 {
 	interestRate = interest;
 }

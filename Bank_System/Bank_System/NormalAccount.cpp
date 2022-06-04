@@ -1,7 +1,7 @@
 #include "NormalAccount.h"
 
-NormalAccount::NormalAccount(int id, const StringC& name, const StringC& pass, const StringC& iban, double amount, const time_t& date)
-	: Account(id, name, pass, iban, amount, date) {}
+NormalAccount::NormalAccount(int id, const StringC& name, const StringC& pass, const StringC& iban, const time_t& date, double amount)
+	: Account(id, name, pass, iban, date, amount) {}
 
 void NormalAccount::display() const
 {

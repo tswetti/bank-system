@@ -17,3 +17,15 @@ StringC Customer::getAddress() const
 {
 	return address;
 }
+
+void Customer::display() const
+{
+	std::cout << "Id: " << id << std::endl;
+	std::cout << "Name: " << name << std::endl;
+	std::cout << "Address: " << address << std::endl;
+}
+
+Customer* Customer::clone() const
+{
+	return new Customer(*this);
+}

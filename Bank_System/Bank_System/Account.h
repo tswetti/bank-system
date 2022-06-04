@@ -16,7 +16,7 @@ protected:
 
 public:
 	Account() = delete;
-	Account(int, const StringC&, const StringC&, const StringC&, double, const time_t&);
+	Account(int, const StringC&, const StringC&, const StringC&, const time_t&, double);
 
 	virtual void display() const;
 	double getBalance() const;
@@ -25,4 +25,7 @@ public:
 	virtual bool withdraw(double) = 0;
 
 	virtual Account* clone() const = 0;
+
+	int getUserId() const;
+	StringC getIban() const;
 };

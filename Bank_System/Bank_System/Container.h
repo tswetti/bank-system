@@ -19,6 +19,11 @@ public:
 	void add(const T*);
 	bool deleteAt(int);
 
+	void print() const;
+
+	int getSize() const;
+	
+	T* getAt(int) const;
 };
 
 template <typename T>
@@ -111,4 +116,31 @@ bool Container<T>::deleteAt(int index)
 	size--;
 
 	return true;
+}
+
+template <typename T>
+void Container<T>::print() const
+{
+	for (int i = 0; i < size; i++)
+	{
+		std::cout << i + 1 << std::endl;
+		list[i]->display();
+		std::cout << std::endl;
+	}
+}
+
+template <typename T>
+int Container<T>::getSize() const
+{
+	return size;
+}
+
+template <typename T>
+T* Container<T>::getAt(int index) const
+{
+	if (index < 0 || index >= size)
+		//return new T();
+		return list[0];
+
+	return list[index];
 }

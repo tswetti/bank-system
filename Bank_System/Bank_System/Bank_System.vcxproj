@@ -140,21 +140,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Account.cpp" />
+    <ClCompile Include="Bank.cpp" />
     <ClCompile Include="Customer.cpp" />
     <ClCompile Include="NormalAccount.cpp" />
     <ClCompile Include="PrivilegeAccount.cpp" />
     <ClCompile Include="SavingsAccount.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="StringC.cpp" />
+    <ClCompile Include="Transaction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Account.h" />
+    <ClInclude Include="Bank.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="Customer.h" />
     <ClInclude Include="NormalAccount.h" />
     <ClInclude Include="PrivilegeAccount.h" />
     <ClInclude Include="SavingsAccount.h" />
     <ClInclude Include="StringC.h" />
+    <ClInclude Include="Transaction.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

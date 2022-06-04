@@ -35,6 +35,28 @@ StringC::StringC()
 	size = 0;
 }
 
+StringC::StringC(int num)
+{
+	size = 0;
+
+	int tempNum = num;
+	while (tempNum >= 1)
+	{
+		size++;
+		tempNum /= 10;
+	}
+
+	str = new char[size + 1];
+
+	for (int i = size - 1; i >= 0; i--)
+	{
+		str[i] = (num % 10) + '0';
+		num /= 10;
+	}
+
+	str[size] = '\0';
+}
+
 StringC::StringC(const StringC& other)
 {
 	copy(other);

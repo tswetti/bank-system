@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <fstream>
+#include <iostream>
 
 class StringC
 {
@@ -17,6 +18,7 @@ public:
 
 	StringC();
 	StringC(const StringC&);
+	StringC(int);
 	StringC(StringC&&);
 
 	StringC& operator=(const StringC&);

@@ -1,8 +1,8 @@
 #include "PrivilegeAccount.h"
 #include <iostream>
 
-PrivilegeAccount::PrivilegeAccount(int id, const StringC& name, const StringC& pass, const StringC& iban, double amount, const time_t& date, double overdraft)
-	: Account(id, name, pass, iban, amount, date)
+PrivilegeAccount::PrivilegeAccount(int id, const StringC& name, const StringC& pass, const StringC& iban, const time_t& date, double overdraft, double amount)
+	: Account(id, name, pass, iban, date, amount)
 {
 	this->overdraft = overdraft;
 }
