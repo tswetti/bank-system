@@ -16,7 +16,7 @@ public:
 	Container& operator=(const Container&);
 	~Container();
 
-	void add(const T*);
+	void add(T*);
 	bool deleteAt(int);
 
 	void print() const;
@@ -93,12 +93,12 @@ Container<T>::~Container()
 }
 
 template <typename T>
-void Container<T>::add(const T* item)
+void Container<T>::add(T* item)
 {
 	if (size >= capacity)
 		resize();
 
-	list[size++] = item->clone();
+	list[size++] = item;
 }
 
 template <typename T>
@@ -139,7 +139,6 @@ template <typename T>
 T* Container<T>::getAt(int index) const
 {
 	if (index < 0 || index >= size)
-		//return new T();
 		return list[0];
 
 	return list[index];

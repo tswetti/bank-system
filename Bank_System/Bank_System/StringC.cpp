@@ -108,8 +108,16 @@ const char* StringC::getString() const
 
 void StringC::setString(const char* str)
 {
-	if (str != nullptr)
+	if (this->str != nullptr)
 		free();
+
+	if (strlen(str) == 0)
+	{
+		size = 0;
+		this->str = new char[1];
+		this->str[0] = '\0';
+		return;
+	}
 
 	size = strlen(str);
 	this->str = new char[size + 1];
@@ -149,4 +157,21 @@ std::istream& operator>>(std::istream& is, StringC& string)
 bool operator==(const StringC& lhs, const StringC& rhs)
 {
 	return strcmp(lhs.getString(), rhs.getString()) == 0;
+}
+
+void StringC::getline(std::istream& ifs)
+{
+	delete[] str;
+
+	char buff[1024];
+
+	ifs.getline(buff, 1024, '\n');
+	int length = strlen(buff);
+	str = new char[length + 1];
+
+	for (int i = 0; i < length; i++)
+		str[i] = buff[i];
+
+	str[length] = '\0';
+	size = length;
 }

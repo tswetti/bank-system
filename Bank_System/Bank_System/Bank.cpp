@@ -24,11 +24,9 @@ int Bank::getAccountsSize() const
 	return accounts.getSize();
 }
 
-bool Bank::addCustomer(const Customer* c)
+bool Bank::addCustomer(Customer* c)
 {
-	int index = getCustomerIndexById(c->getId());
-
-	if (index != -1)
+	if (getCustomerIndexById(c->getId()) != -1)
 		return false;
 
 	customers.add(c);
@@ -40,8 +38,6 @@ bool Bank::addCustomer(const Customer* c)
 	tDescr.concat(".");
 
 	log.add(new Transaction(timer, tDescr));
-
-	return true;
 }
 
 bool Bank::deleteCustomer(int id)
@@ -64,13 +60,9 @@ bool Bank::deleteCustomer(int id)
 	return true;
 }
 
-bool Bank::addAccount(const Account* a)
+void Bank::addAccount(Account* a)
 {
-	int customerIndex = getCustomerIndexById(a->getUserId());
-	int bankIndex = getAccountIndexByIBAN(a->getIban());
-
-	if (customerIndex == -1 || bankIndex != -1)
-		return false;
+	// validation is in addAccountByUserInput
 
 	accounts.add(a);
 
@@ -81,8 +73,6 @@ bool Bank::addAccount(const Account* a)
 	tDescr.concat(".");
 
 	log.add(new Transaction(timer, tDescr));
-
-	return true;
 }
 
 bool Bank::deleteAccount(const StringC& iban)
@@ -103,15 +93,16 @@ bool Bank::deleteAccount(const StringC& iban)
 	return true;
 }
 
-bool Bank::deleteCustomersAccounts(int id)
+void Bank::deleteCustomersAccounts(int id)
 {
 	for (int i = 0; i < accounts.getSize(); i++)
 	{
 		if (accounts.getAt(i)->getUserId() == id)
+		{
 			accounts.deleteAt(i);
+			i--;
+		}
 	}
-
-	return true;
 }
 
 int Bank::getCustomerIndexById(int id) const
@@ -134,6 +125,43 @@ int Bank::getAccountIndexByIBAN(const StringC& iban) const
 	}
 
 	return -1;
+}
+
+int Bank::getAccountIndexByUsername(const StringC& username) const
+{
+	for (int i = 0; i < accounts.getSize(); i++)
+	{
+		if(accounts.getAt(i)->getUsername()==username)
+			return i;
+	}
+
+	return -1;
+}
+
+StringC Bank::getIbanByUsernamePass(const StringC & username, const StringC & pass) const
+{
+	for (int i = 0; i < accounts.getSize(); i++)
+	{
+		if (accounts.getAt(i)->isLoggedIn(username, pass))
+			return accounts.getAt(i)->getIban();
+	}
+
+	return StringC();
+}
+
+StringC Bank::getIbanAfterLogin() const
+{
+	StringC username, pass;
+
+	std::cout << "Username: ";
+	std::cin >> username;
+
+	std::cout << "Password: ";
+	std::cin >> pass;
+
+	std::cin.ignore();
+
+	return getIbanByUsernamePass(username, pass);
 }
 
 void Bank::listCustomers() const
@@ -199,9 +227,7 @@ bool Bank::transfer(const StringC& fromIban, const StringC& toIban, double amoun
 
 	time_t timer = time(NULL);
 
-	StringC tDescr = "Deposit of ";
-	tDescr.concat(amount);
-	tDescr.concat(" currency from account with IBAN: ");
+	StringC tDescr = "Deposit from account with IBAN: ";
 	tDescr.concat(fromIban);
 	tDescr.concat(" to account with IBAN: ");
 	tDescr.concat(toIban);
@@ -225,9 +251,7 @@ bool Bank::withdraw(const StringC& iban, double amount)
 
 	time_t timer = time(NULL);
 
-	StringC tDescr = "Withdrawal of ";
-	tDescr.concat(amount);
-	tDescr.concat(" currency to account with IBAN: ");
+	StringC tDescr = "Withdrawal from account with IBAN: ";
 	tDescr.concat(iban);
 	tDescr.concat(".");
 
@@ -247,9 +271,7 @@ bool Bank::deposit(const StringC& iban, double amount)
 
 	time_t timer = time(NULL);
 
-	StringC tDescr = "Deposit of ";
-	tDescr.concat(amount);
-	tDescr.concat(" currency from account with IBAN: ");
+	StringC tDescr = "Deposit to account with IBAN: ";
 	tDescr.concat(iban);
 	tDescr.concat(".");
 
@@ -268,29 +290,24 @@ void Bank::display() const
 
 void Bank::addCustomerFromUserInput()
 {
-	const int MAX_ADDRESS_LENGTH = 60;
-
 	StringC name, address;
-	char addressArr[MAX_ADDRESS_LENGTH];
 
 	std::cout << "Customer name: ";
-	std::cin >> name;
-	std::cin.ignore();
+	name.getline(std::cin);
 
 	std::cout << "Customer address: ";
-	std::cin.getline(addressArr, MAX_ADDRESS_LENGTH);
-	address = addressArr;
+	address.getline(std::cin);
 
 	int customerId = getCustomersSize() + 1;
 
 	Customer* c = new Customer(customerId, name, address);
 
-	if (!addCustomer(c))
+	if (addCustomer(c))
 	{
 		std::cout << "Adding this customer was unsuccessful." << std::endl;
 		return;
 	}
-	std::cout << "Customer added successfully." << std::endl;
+	std::cout << "Customer with id (" << customerId << ") added successfully." << std::endl;
 }
 
 void Bank::deleteCustomerFromUserInput()
@@ -302,7 +319,7 @@ void Bank::deleteCustomerFromUserInput()
 
 	if (!deleteCustomer(id))
 	{
-		std::cout << "Deleting this customer was unsuccessful." << std::endl;
+		std::cout << "Invalid id. \nDeleting this customer was unsuccessful." << std::endl;
 		return;
 	}
 	std::cout << "Customer deleted successfully." << std::endl;
@@ -310,22 +327,42 @@ void Bank::deleteCustomerFromUserInput()
 
 void Bank::addAccountFromUserInput()
 {
-	bool result = true;
-
 	int id;
 	StringC username, password, iban, type;
 
-	std::cout << "User id: ";
+	std::cout << "User id: ";	// adding by Customer's unique field
 	std::cin >> id;
+
+	if (getCustomerIndexById(id) == -1)
+	{
+		std::cout << "Invalid customer id. \nAdding this account was unsuccessful." << std::endl;
+		return;
+	}
 
 	std::cout << "Username: ";
 	std::cin >> username;
 
+	int userIndex = getAccountIndexByUsername(username);
+
+	if (userIndex != -1)
+	{
+		std::cin.ignore();
+		std::cout << "Username is taken." << std::endl;
+		return;
+	}
+
+	std::cin.ignore();
 	std::cout << "Password: ";
-	std::cin >> password;
+	password.getline(std::cin);
 
 	std::cout << "IBAN: ";
 	std::cin >> iban;
+
+	if (getAccountIndexByIBAN(iban) != -1)
+	{
+		std::cout << "IBAN is taken. \nAdding this account was unsuccessful." << std::endl;
+		return;
+	}
 
 	std::cout << "Type of account: normal | savings | privilege" << std::endl;
 	std::cin >> type;
@@ -333,44 +370,56 @@ void Bank::addAccountFromUserInput()
 	time_t timer = NULL;
 
 	if (type == "normal")
-		result = addAccount(new NormalAccount(id, username, password, iban, timer));
+	{
+		std::cin.ignore();
+		addAccount(new NormalAccount(id, username, password, iban, timer));
+		std::cout << "Account created successfully." << std::endl;
+		return;
+	}
+
 	else if (type == "savings")
 	{
+		std::cin.ignore();
+
 		int interestRate;
 		std::cout << "Interest rate (percent): ";
 		std::cin >> interestRate;
+		std::cin.ignore();
 
 		if (interestRate <= 0 || interestRate > 100)
 		{
-			std::cin.ignore();
 			std::cout << "Interest rate has to be between 0 and 100." << std::endl;
 			return;
 		}
 
-		result = addAccount(new SavingsAccount(id, username, password, iban, timer, interestRate));
+		addAccount(new SavingsAccount(id, username, password, iban, timer, interestRate));
+		std::cout << "Account created successfully." << std::endl;
+		return;
 	}
 	else if (type == "privilege")
 	{
+		std::cin.ignore();
+
 		double overdraft;
 		std::cout << "Overdraft: ";
 		std::cin >> overdraft;
+		std::cin.ignore();
 
 		if (overdraft < 0)
 		{
-			std::cin.ignore();
 			std::cout << "Overdraft has to be a positive number." << std::endl;
 			return;
 		}
 
-		result = addAccount(new PrivilegeAccount(id, username, password, iban, timer, overdraft));
+		addAccount(new PrivilegeAccount(id, username, password, iban, timer, overdraft));
+		std::cout << "Account created successfully." << std::endl;
+
+		return;
 	}
+	else
+		std::cout << "Invalid type." << std::endl;
 
 	std::cin.ignore();
-
-	if (!result)
-		std::cout << "Adding this account was unsuccessful." << std::endl;
-	else
-		std::cout << "Account added successfully." << std::endl;
 }
 
 void Bank::deleteAccountFromUserInput()
@@ -398,11 +447,15 @@ void Bank::listCustomerAccFromUserInput() const
 
 void Bank::withdrawFromUserInput()
 {
-	StringC iban;
-	double amount = 0;
+	StringC iban = getIbanAfterLogin();
 
-	std::cout << "Withdraw from account with IBAN: ";
-	std::cin >> iban;
+	if (iban.getSize() == 0)
+	{
+		std::cout << "Unsuccessful login." << std::endl;
+		return;
+	}
+
+	double amount = 0;
 
 	std::cout << "Amount: ";
 	std::cin >> amount;
@@ -416,39 +469,64 @@ void Bank::withdrawFromUserInput()
 
 void Bank::depositFromUserInput()
 {
-	StringC iban;
-	double amount = 0;
+	StringC iban = getIbanAfterLogin();
 
-	std::cout << "Deposit to account with IBAN: ";
-	std::cin >> iban;
+	if (iban.getSize() == 0)
+	{
+		std::cout << "Unsuccessful login." << std::endl;
+		return;
+	}
+
+	double amount = 0;
 
 	std::cout << "Amount: ";
 	std::cin >> amount;
 	std::cin.ignore();
 
 	if (!deposit(iban, amount))
-		std::cout << "Deposit was unsuccessful." << std::endl;
+		std::cout << "Incorrect IBAN. \nDeposit was unsuccessful." << std::endl;
 	else
 		std::cout << "Deposit was successful." << std::endl;
 }
 
 void Bank::transferFromUserInput()
 {
-	StringC ibanFrom, ibanTo;
+	StringC ibanFrom = getIbanAfterLogin();
+
+	if (ibanFrom.getSize() == 0)
+	{
+		std::cout << "Unsuccessful login." << std::endl;
+		return;
+	}
+
+	SavingsAccount* saccount = dynamic_cast<SavingsAccount*>(accounts.getAt(getAccountIndexByIBAN(ibanFrom)));
+	if (saccount != nullptr)
+	{
+		std::cout << "Cannot transfer from a savings account." << std::endl;
+		delete saccount;
+		return;
+	}
+	delete saccount;
+
+	StringC ibanTo;
 	double amount = 0;
 
-	std::cout << "Tranfer from account with IBAN: ";
-	std::cin >> ibanFrom;
-
-	std::cout << "To account with IBAN: ";
+	std::cout << "Transfer to account with IBAN: ";
 	std::cin >> ibanTo;
+
+	if (getAccountIndexByIBAN(ibanTo) == -1)
+	{
+		std::cin.ignore();
+		std::cout << "Incorrect receiver IBAN." << std::endl;
+		return;
+	}
 
 	std::cout << "Amount: ";
 	std::cin >> amount;
 	std::cin.ignore();
 
 	if (!transfer(ibanFrom, ibanTo, amount))
-		std::cout << "Transfer was unsuccessful." << std::endl;
+		std::cout << "Insufficient funds. \nTransfer was unsuccessful." << std::endl;
 	else
 		std::cout << "Transfer was successful." << std::endl;
 }

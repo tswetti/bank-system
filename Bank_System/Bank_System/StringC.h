@@ -20,11 +20,12 @@ public:
 	StringC(const StringC&);
 	StringC(int);
 	StringC(StringC&&);
+	~StringC();
 
 	StringC& operator=(const StringC&);
 	StringC& operator=(StringC&&);
 
-	~StringC();
+	void getline(std::istream&);
 
 	size_t getSize() const;
 	const char* getString() const;

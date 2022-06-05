@@ -152,7 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Account.h" />
     <ClInclude Include="Bank.h" />
-    <ClInclude Include="Container.h" />
+    <ClInclude Include="Container.hpp" />
     <ClInclude Include="Customer.h" />
     <ClInclude Include="NormalAccount.h" />
     <ClInclude Include="PrivilegeAccount.h" />

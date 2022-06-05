@@ -8,7 +8,7 @@
 
 #include "Transaction.h"
 
-#include "Container.h"
+#include "Container.hpp"
 #include "StringC.h"
 
 #include <iostream>
@@ -32,15 +32,18 @@ public:
 	int getCustomersSize() const;
 	int getAccountsSize() const;
 
-	bool addCustomer(const Customer*);
+	bool addCustomer(Customer*);
 	bool deleteCustomer(int);
 
-	bool addAccount(const Account*);
+	void addAccount(Account*);
 	bool deleteAccount(const StringC&);
-	bool deleteCustomersAccounts(int);
+	void deleteCustomersAccounts(int);
 
 	int getCustomerIndexById(int) const;
 	int getAccountIndexByIBAN(const StringC&) const;
+	int getAccountIndexByUsername(const StringC&) const;
+	StringC getIbanByUsernamePass(const StringC&, const StringC&) const;
+	StringC getIbanAfterLogin() const;
 
 	void listCustomers() const;
 	void listAccounts() const;

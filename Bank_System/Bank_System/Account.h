@@ -28,4 +28,7 @@ public:
 
 	int getUserId() const;
 	StringC getIban() const;
+	StringC getUsername() const;
+
+	bool isLoggedIn(const StringC&, const StringC&) const;
 };

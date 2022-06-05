@@ -1,7 +1,3 @@
-/*#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>*/
-
 #include "StringC.h"
 #include "Bank.h"
 #include "NormalAccount.h"
@@ -17,84 +13,26 @@ bool commandMenu(Bank&);
 
 int main()
 {
-	/*_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);*/
-
-	/*Bank b("Bank", "Sofia");
-	Customer* c1 = new Customer(1, "Tsvetelina", "Pleven");
-	Customer* c2 = new Customer(2, "Ivan", "Sofia");
-	Customer* c3 = new Customer(2, "Lili", "Sofia");
-
-	b.addCustomer(c1);
-	b.addCustomer(c2);
-	b.addCustomer(c3);
-
-	//b.listCustomerAccount(2);
-	//b.listCustomers();
-
-	time_t timer;
-	time(&timer);
-
-	Account* a = new NormalAccount(1, "tswetti", "123","123456", 10000, timer);
-
-	time(&timer);
-
-	Account* a2 = new SavingsAccount(2, "iii", "12", "123", 12, timer, 5);
-	b.addAccount(a);
-	b.addAccount(a2);
-
-	b.deleteCustomer(1);
-	b.listCustomers();
-
-	/*b.transfer("123456", "123", 200);
-
-	b.deposit("123", 100);
-	b.withdraw("123", 200);
-	b.withdraw("123456", 12);*/
-
-	//b.listCustomerAccount(1);
-	//b.listCustomerAccount(2);
-	//b.listAccounts();
-
-	
-
-	//b.listTransactions();
-
-	/*b.listCustomers();
-	b.listAccounts();
-	b.listCustomerAccount(2);
-	
-	b.display();
-
-	std::ofstream ofs("log.txt");
-	b.exportLog(ofs);
-	ofs.close();*/
-
 	appStart();
 
 	return 0;
 }
 
 bool appStart()
-{
-	const int MAX_ADDRESS_LENGTH = 60;
-	
+{	
 	StringC name;
 	StringC address;
-	char addressArr[MAX_ADDRESS_LENGTH];
 
 	std::cout << "Bank name: ";
-	std::cin >> name;
-	std::cin.ignore();
+	name.getline(std::cin);
 
-	if (strcmp(name.getString(), "quit") == 0)
+	if (name == "quit")
 		return false;
 
 	std::cout << "Address: ";
-	std::cin.getline(addressArr, MAX_ADDRESS_LENGTH);
-	address = addressArr;
+	address.getline(std::cin);
 
-	if (strcmp(addressArr, "quit") == 0)
+	if (address == "quit")
 		return false;
 
 	Bank b(name, address);
@@ -113,13 +51,11 @@ bool appStart()
 
 bool commandMenu(Bank& b)
 {
-	const int MAX_CMD_LENGTH = 60;
-
-	char cmd[MAX_CMD_LENGTH] = {};
 	StringC command;
 
-	std::cin.getline(cmd, MAX_CMD_LENGTH);
-	command = cmd;
+	std::cout << ">";
+
+	command.getline(std::cin);
 
 	if (command == "quit")
 		return false;

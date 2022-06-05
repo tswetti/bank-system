@@ -30,3 +30,13 @@ StringC Account::getIban() const
 {
 	return iban;
 }
+
+StringC Account::getUsername() const
+{
+	return username;
+}
+
+bool Account::isLoggedIn(const StringC& user, const StringC& pass) const
+{
+	return user == username && pass == password;
+}

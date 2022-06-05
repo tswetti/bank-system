@@ -62,7 +62,7 @@
     <ClInclude Include="PrivilegeAccount.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Container.h">
+    <ClInclude Include="Container.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Bank.h">
