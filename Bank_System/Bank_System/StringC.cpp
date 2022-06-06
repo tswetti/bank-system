@@ -37,14 +37,7 @@ StringC::StringC()
 
 StringC::StringC(int num)
 {
-	size = 0;
-
-	int tempNum = num;
-	while (tempNum >= 1)
-	{
-		size++;
-		tempNum /= 10;
-	}
+	size = integerDigitsCnt(num);
 
 	str = new char[size + 1];
 
@@ -55,6 +48,45 @@ StringC::StringC(int num)
 	}
 
 	str[size] = '\0';
+}
+
+StringC::StringC(double num)
+{
+	int prePoint = num;
+	double s = num - prePoint;
+
+	int counter = 0;
+
+	while ((double(s - (int)s) > 0.00000099 || double((int)s - s) > 0.00000099) && counter < 9)
+	{
+		s *= 10;
+		counter++;
+	}
+
+	int postPoint = s;
+
+	int firstDigitsCnt = integerDigitsCnt(prePoint);
+	int secondDigitsCnt = integerDigitsCnt(postPoint);
+
+	size = firstDigitsCnt + secondDigitsCnt + 1;
+
+	str = new char[size + 1];
+
+	for (int i = firstDigitsCnt + secondDigitsCnt; i > firstDigitsCnt; i--)
+	{
+		str[i] = (postPoint % 10) + '0';
+		postPoint /= 10;
+	}
+
+	str[firstDigitsCnt] = '.';
+
+	for (int i = firstDigitsCnt - 1; i >= 0; i--)
+	{
+		str[i] = (prePoint % 10) + '0';
+		prePoint /= 10;
+	}
+
+	str[firstDigitsCnt + secondDigitsCnt + 1] = '\0';
 }
 
 StringC::StringC(const StringC& other)
@@ -174,4 +206,17 @@ void StringC::getline(std::istream& ifs)
 
 	str[length] = '\0';
 	size = length;
+}
+
+int integerDigitsCnt(int num)
+{
+	int cnt = 0;
+
+	while (num >= 1)
+	{
+		cnt++;
+		num /= 10;
+	}
+
+	return cnt;
 }

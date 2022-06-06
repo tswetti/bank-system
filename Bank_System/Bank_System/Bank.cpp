@@ -24,6 +24,11 @@ int Bank::getAccountsSize() const
 	return accounts.getSize();
 }
 
+int Bank::getTransactionsSize() const
+{
+	return log.getSize();
+}
+
 bool Bank::addCustomer(Customer* c)
 {
 	if (getCustomerIndexById(c->getId()) != -1)
@@ -138,6 +143,19 @@ int Bank::getAccountIndexByUsername(const StringC& username) const
 	return -1;
 }
 
+int Bank::getCustomersMaxId() const
+{
+	int max = 0;
+
+	for (int i = 0; i < customers.getSize(); i++)
+	{
+		if (customers.getAt(i)->getId() > max)
+			max = customers.getAt(i)->getId();
+	}
+
+	return max;
+}
+
 StringC Bank::getIbanByUsernamePass(const StringC & username, const StringC & pass) const
 {
 	for (int i = 0; i < accounts.getSize(); i++)
@@ -227,7 +245,9 @@ bool Bank::transfer(const StringC& fromIban, const StringC& toIban, double amoun
 
 	time_t timer = time(NULL);
 
-	StringC tDescr = "Deposit from account with IBAN: ";
+	StringC tDescr = "Transfer of ";
+	tDescr.concat(amount);
+	tDescr.concat(" currency from account with IBAN: ");
 	tDescr.concat(fromIban);
 	tDescr.concat(" to account with IBAN: ");
 	tDescr.concat(toIban);
@@ -251,7 +271,9 @@ bool Bank::withdraw(const StringC& iban, double amount)
 
 	time_t timer = time(NULL);
 
-	StringC tDescr = "Withdrawal from account with IBAN: ";
+	StringC tDescr = "Withdrawal of ";
+	tDescr.concat(amount);
+	tDescr.concat(" currency from account with IBAN: ");
 	tDescr.concat(iban);
 	tDescr.concat(".");
 
@@ -271,7 +293,9 @@ bool Bank::deposit(const StringC& iban, double amount)
 
 	time_t timer = time(NULL);
 
-	StringC tDescr = "Deposit to account with IBAN: ";
+	StringC tDescr = "Deposit of ";
+	tDescr.concat(amount);
+	tDescr.concat(" currency to account with IBAN: ");
 	tDescr.concat(iban);
 	tDescr.concat(".");
 
@@ -298,7 +322,7 @@ void Bank::addCustomerFromUserInput()
 	std::cout << "Customer address: ";
 	address.getline(std::cin);
 
-	int customerId = getCustomersSize() + 1;
+	int customerId = getCustomersMaxId() + 1;
 
 	Customer* c = new Customer(customerId, name, address);
 
@@ -442,6 +466,12 @@ void Bank::listCustomerAccFromUserInput() const
 	std::cin >> id;
 	std::cin.ignore();
 
+	if (getCustomerIndexById(id) == -1)
+	{
+		std::cout << "There is no user with id " << id << "." << std::endl;
+		return;
+	}
+
 	listCustomerAccount(id);
 }
 
@@ -460,6 +490,12 @@ void Bank::withdrawFromUserInput()
 	std::cout << "Amount: ";
 	std::cin >> amount;
 	std::cin.ignore();
+
+	if (amount <= 0)
+	{
+		std::cout << "Cannot withdraw negative amount." << std::endl;
+		return;
+	}
 
 	if (!withdraw(iban, amount))
 		std::cout << "Withdrawal was unsuccessful." << std::endl;
@@ -482,6 +518,12 @@ void Bank::depositFromUserInput()
 	std::cout << "Amount: ";
 	std::cin >> amount;
 	std::cin.ignore();
+
+	if (amount <= 0)
+	{
+		std::cout << "Cannot deposit negative amount." << std::endl;
+		return;
+	}
 
 	if (!deposit(iban, amount))
 		std::cout << "Incorrect IBAN. \nDeposit was unsuccessful." << std::endl;
@@ -524,6 +566,12 @@ void Bank::transferFromUserInput()
 	std::cout << "Amount: ";
 	std::cin >> amount;
 	std::cin.ignore();
+
+	if (amount <= 0)
+	{
+		std::cout << "Cannot transfer negative amount." << std::endl;
+		return;
+	}
 
 	if (!transfer(ibanFrom, ibanTo, amount))
 		std::cout << "Insufficient funds. \nTransfer was unsuccessful." << std::endl;

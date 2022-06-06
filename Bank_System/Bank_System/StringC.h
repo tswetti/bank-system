@@ -19,6 +19,7 @@ public:
 	StringC();
 	StringC(const StringC&);
 	StringC(int);
+	StringC(double);
 	StringC(StringC&&);
 	~StringC();
 
@@ -40,3 +41,4 @@ public:
 
 bool operator==(const StringC&, const StringC&);
 
+int integerDigitsCnt(int);

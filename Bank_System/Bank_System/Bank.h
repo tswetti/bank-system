@@ -31,6 +31,7 @@ public:
 
 	int getCustomersSize() const;
 	int getAccountsSize() const;
+	int getTransactionsSize() const;
 
 	bool addCustomer(Customer*);
 	bool deleteCustomer(int);
@@ -38,12 +39,6 @@ public:
 	void addAccount(Account*);
 	bool deleteAccount(const StringC&);
 	void deleteCustomersAccounts(int);
-
-	int getCustomerIndexById(int) const;
-	int getAccountIndexByIBAN(const StringC&) const;
-	int getAccountIndexByUsername(const StringC&) const;
-	StringC getIbanByUsernamePass(const StringC&, const StringC&) const;
-	StringC getIbanAfterLogin() const;
 
 	void listCustomers() const;
 	void listAccounts() const;
@@ -68,4 +63,11 @@ public:
 	void withdrawFromUserInput();
 	void depositFromUserInput();
 	void transferFromUserInput();
+
+	int getCustomerIndexById(int) const;
+	int getAccountIndexByIBAN(const StringC&) const;
+	int getAccountIndexByUsername(const StringC&) const;
+	int getCustomersMaxId() const;
+	StringC getIbanByUsernamePass(const StringC&, const StringC&) const;
+	StringC getIbanAfterLogin() const;
 };

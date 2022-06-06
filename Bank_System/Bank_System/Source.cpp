@@ -73,16 +73,31 @@ bool commandMenu(Bank& b)
 		b.deleteAccountFromUserInput();
 
 	else if (command == "list customers")
-		b.listCustomers();
+	{
+		if (b.getCustomersSize() == 0)
+			std::cout << "No customers." << std::endl;
+		else
+			b.listCustomers();
+	}
 
 	else if (command == "list accounts")
-		b.listAccounts();
+	{
+		if (b.getAccountsSize() == 0)
+			std::cout << "No accounts." << std::endl;
+		else
+			b.listAccounts();
+	}
 
 	else if (command == "list customer account")
 		b.listCustomerAccFromUserInput();
 
 	else if (command == "list log")
-		b.listTransactions();
+	{
+		if (b.getTransactionsSize() == 0)
+			std::cout << "No transactions." << std::endl;
+		else
+			b.listTransactions();
+	}
 
 	else if (command == "display")
 		b.display();
